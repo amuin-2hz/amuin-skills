@@ -1,13 +1,13 @@
-# free-c-drive-space
+# free-drive-space
 
-Reclaim C drive space on Windows via directory junctions (`mklink /j`).
+Reclaim drive space on Windows via directory junctions (`mklink /j`).
 
-Transparently redirect large cache/backup directories to another drive. Apps never notice.
+Transparently redirect large folders — iPhone backups, browser profiles, WeChat files, dev caches — to another drive. Apps never notice. Works for any drive, not just C.
 
 ## Quick Start
 
 ```powershell
-# See what's eating C drive
+# See what's eating your drives
 powershell -File scripts/scan.ps1
 
 # Migrate a directory (safe: verifies before deleting)
@@ -25,7 +25,11 @@ powershell -File scripts/verify-junctions.ps1
 
 ## Supported Targets
 
-Apple Devices backups, npm cache, npm global packages, pip cache, Gradle, Maven, old iTunes backups.
+Apple Devices backups, Chrome/Edge profiles, WeChat/QQ files, npm/pip caches, Gradle, Maven, old iTunes backups.
+
+## Important
+
+Close apps (Chrome, Edge, WeChat, QQ) before migrating their folders. Check Task Manager to ensure no background processes remain.
 
 ## Unsupported
 
@@ -36,7 +40,7 @@ Apple Devices backups, npm cache, npm global packages, pip cache, Gradle, Maven,
 | File | Purpose |
 |------|---------|
 | `SKILL.md` | Agent skill — loaded by AI coding assistants |
-| `scripts/scan.ps1` | Scan C drive for cache directories, report size + junction status |
+| `scripts/scan.ps1` | Scan drives for space hogs, report size + junction status |
 | `scripts/migrate.ps1` | Safe migration pipeline: copy → verify → delete → junction |
 | `scripts/verify-junctions.ps1` | Health check all known junctions |
 

@@ -4,13 +4,18 @@
 #>
 
 $checks = @(
+    @{ Name='Apple Backup';         Path="$env:USERPROFILE\Apple\MobileSync\Backup"          },
+    @{ Name='Chrome User Data';     Path="$env:LOCALAPPDATA\Google\Chrome\User Data"          },
+    @{ Name='Edge User Data';       Path="$env:LOCALAPPDATA\Microsoft\Edge\User Data"         },
+    @{ Name='WeChat Files';         Path="$env:USERPROFILE\Documents\WeChat Files"            },
+    @{ Name='WeChat AppData';       Path="$env:APPDATA\Tencent\WeChat"                        },
+    @{ Name='QQ Files';             Path="$env:USERPROFILE\Documents\Tencent Files"           },
     @{ Name='npm cache';            Path="$env:LOCALAPPDATA\npm-cache"                       },
     @{ Name='npm global';           Path="$env:APPDATA\npm"                                  },
-    @{ Name='Apple Backup';         Path="$env:USERPROFILE\Apple\MobileSync\Backup"          },
-    @{ Name='Old iTunes Backup';    Path="$env:APPDATA\Apple Computer\MobileSync\Backup"     },
     @{ Name='pip cache';            Path="$env:LOCALAPPDATA\pip\cache"                       },
     @{ Name='Gradle';               Path="$env:USERPROFILE\.gradle"                          },
-    @{ Name='Maven';                Path="$env:USERPROFILE\.m2"                              }
+    @{ Name='Maven';                Path="$env:USERPROFILE\.m2"                              },
+    @{ Name='Old iTunes Backup';    Path="$env:APPDATA\Apple Computer\MobileSync\Backup"     }
 )
 
 $ok = 0; $broken = 0; $absent = 0; $onC = 0
@@ -35,7 +40,7 @@ foreach ($c in $checks) {
             $broken++
         }
     } else {
-        $lines += [PSCustomObject]@{ Name=$c.Name; Status='ON C'; Detail='(not a junction)' }
+        $lines += [PSCustomObject]@{ Name=$c.Name; Status='ON DISK'; Detail='(not a junction)' }
         $onC++
     }
 }
@@ -47,10 +52,10 @@ Write-Host ('-' * 70)
 foreach ($l in $lines) {
     $color = if ($l.Status -eq 'OK') { 'Green' }
         elseif ($l.Status -eq 'BROKEN') { 'Red' }
-        elseif ($l.Status -eq 'ON C') { 'Yellow' }
+        elseif ($l.Status -eq 'ON DISK') { 'Yellow' }
         else { 'DarkGray' }
     Write-Host ("{0,-22} {1,-8} {2}" -f $l.Name, $l.Status, $l.Detail) -ForegroundColor $color
 }
 Write-Host ('-' * 70)
 $summaryColor = if ($broken -gt 0) { 'Red' } else { 'Green' }
-Write-Host "OK:$ok  Broken:$broken  Absent:$absent  On-C:$onC" -ForegroundColor $summaryColor
+Write-Host "OK:$ok  Broken:$broken  Absent:$absent  On-Disk:$onC" -ForegroundColor $summaryColor

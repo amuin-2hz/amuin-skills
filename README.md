@@ -20,7 +20,7 @@ Saving you from a sluggish computer *is* saving you money.
 
 | Tool | What it does |
 |------|-------------|
-| [free-c-drive-space](free-c-drive-space/) | Move bloated iPhone backups, app caches, and package downloads off your C drive — safely, with automatic verification. Frees tens to hundreds of GBs. |
+| [free-drive-space](free-drive-space/) | Move bloated iPhone backups, browser profiles, WeChat files, and dev caches off your system drive — safely, with automatic verification. Frees tens to hundreds of GBs. |
 | More coming? | Always. The next one might be that thing you've been cursing at. Got an idea? [Open an issue](https://github.com/amuin-2hz/amuin-skills/issues) |
 
 ## How to Use

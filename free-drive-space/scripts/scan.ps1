@@ -1,11 +1,16 @@
 <#
 .SYNOPSIS
-    Scan known C-drive space hogs and report size + junction status.
+    Scan known space hogs across all drives and report size + junction status.
 #>
 param([switch] $Json)
 
 $targets = @(
     @{ Name='Apple Backup';         Path="$env:USERPROFILE\Apple\MobileSync\Backup"          },
+    @{ Name='Chrome User Data';     Path="$env:LOCALAPPDATA\Google\Chrome\User Data"          },
+    @{ Name='Edge User Data';       Path="$env:LOCALAPPDATA\Microsoft\Edge\User Data"         },
+    @{ Name='WeChat Files';         Path="$env:USERPROFILE\Documents\WeChat Files"            },
+    @{ Name='WeChat AppData';       Path="$env:APPDATA\Tencent\WeChat"                        },
+    @{ Name='QQ Files';             Path="$env:USERPROFILE\Documents\Tencent Files"           },
     @{ Name='npm cache';            Path="$env:LOCALAPPDATA\npm-cache"                       },
     @{ Name='npm global';           Path="$env:APPDATA\npm"                                  },
     @{ Name='pip cache';            Path="$env:LOCALAPPDATA\pip\cache"                       },
@@ -34,7 +39,7 @@ if ($Json) {
 } else {
     $total = 0
     $header = "{0,-22} {1,10} {2,8} {3}" -f 'NAME', 'SIZE', 'STATUS', 'JUNCTION TARGET'
-    Write-Host "`n  C-Drive Cache Scan`n" -ForegroundColor Cyan
+    Write-Host "`n  Drive Space Scan`n" -ForegroundColor Cyan
     Write-Host $header
     Write-Host ('-' * 80)
     foreach ($r in $results) {
@@ -46,13 +51,13 @@ if ($Json) {
             Write-Host ("{0,-22} {1,10} {2,8} {3}" -f $r.Name, $size, 'JNCT', $junctionTarget) -ForegroundColor Green
         } else {
             $size = if ($r.SizeGB -eq 0) { '0 GB' } else { "$($r.SizeGB) GB" }
-            Write-Host ("{0,-22} {1,10} {2,8}" -f $r.Name, $size, 'ON C') -ForegroundColor Yellow
+            Write-Host ("{0,-22} {1,10} {2,8}" -f $r.Name, $size, 'ON DISK') -ForegroundColor Yellow
             $total += $r.SizeGB
         }
     }
     Write-Host ('-' * 80)
     $color = if ($total -gt 5) { 'Red' } else { 'Green' }
-    Write-Host "Total on C drive (not junctioned): $total GB" -ForegroundColor $color
+    Write-Host "Total not junctioned: $total GB" -ForegroundColor $color
     Write-Host ""
     Write-Host 'To migrate: powershell -File scripts/migrate.ps1 -Source "<path>" -Target "H:\Cache\<name>"' -ForegroundColor Cyan
 }
