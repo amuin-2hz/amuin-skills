@@ -142,7 +142,12 @@ if ('context_menu' -in $allCategories) {
         'HKCR:\Drive\shell',
         'HKCR:\DesktopBackground\shell',
         'HKCR:\Folder\shell',
-        'HKCR:\Folder\shellex\ContextMenuHandlers'
+        'HKCR:\Folder\shellex\ContextMenuHandlers',
+        # HKCU-scoped context menu paths (user-level installs like 抖音壁纸, 小智AI助手)
+        'HKCU:\Software\Classes\*\shell',
+        'HKCU:\Software\Classes\Directory\shell',
+        'HKCU:\Software\Classes\Directory\Background\shell',
+        'HKCU:\Software\Classes\DesktopBackground\shell'
     )
 
     foreach ($ctxRoot in $ctxPaths) {
@@ -346,7 +351,7 @@ if ('explorer_bar' -in $allCategories) {
         'HKCR:\Drive\shellex\FolderExtensions',
         'HKCR:\Folder\shellex\ContextMenuHandlers',
         'HKCR:\Folder\shellex\ColumnHandlers',
-        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell'
+        # 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell'  # Windows built-in commands (shell32.dll), never junk
     )
 
     foreach ($exRoot in $explorerPaths) {
@@ -404,7 +409,7 @@ if ('scheduled_tasks' -in $allCategories) {
     $taskEntries = @()
 
     try {
-        $tasks = Get-ScheduledTask -ErrorAction SilentlyContinue |
+        $tasks = @(Get-ScheduledTask -ErrorAction SilentlyContinue) |
             Where-Object { $_.TaskPath -notlike '\Microsoft\Windows\*' }
 
         foreach ($t in $tasks) {

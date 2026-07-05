@@ -16,8 +16,34 @@ $ErrorActionPreference = 'Continue'
 # ── Admin check (skip for dry-run) ──
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin -and -not $WhatIf) {
-    Write-Host "  [ERROR] Admin rights required to modify registry. Run PowerShell as Administrator." -ForegroundColor Red
-    exit 1
+    Write-Host "  [INFO] Admin rights required. Requesting elevation..." -ForegroundColor Yellow
+
+    # Rebuild argument list for self-elevation
+    $argList = @()
+    $argList += '-NoProfile'
+    $argList += '-File'
+    $argList += "`"$PSCommandPath`""
+    foreach ($k in $Keys) {
+        $argList += "-Keys"
+        $argList += "`"$k`""
+    }
+    if ($WhatIf)   { $argList += '-WhatIf' }
+    if ($AlsoDeleteCLSID) { $argList += '-AlsoDeleteCLSID' }
+
+    $psi = New-Object System.Diagnostics.ProcessStartInfo 'powershell.exe'
+    $psi.Arguments = $argList -join ' '
+    $psi.Verb = 'RunAs'
+    $psi.UseShellExecute = $true
+
+    try {
+        $proc = [System.Diagnostics.Process]::Start($psi)
+        $proc.WaitForExit()
+        exit $proc.ExitCode
+    } catch {
+        Write-Host "  [ERROR] Failed to elevate: $_" -ForegroundColor Red
+        Write-Host "  Run PowerShell as Administrator and try again." -ForegroundColor Yellow
+        exit 1
+    }
 }
 
 # ── Create backup directory ──
