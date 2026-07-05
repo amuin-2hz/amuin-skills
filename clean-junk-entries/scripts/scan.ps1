@@ -176,11 +176,17 @@ if ('context_menu' -in $allCategories) {
                 } catch {}
             }
 
-            # Skip standard shell verbs — no command key AND no CLSID resolution means
-            # it's a ProgID-delegated verb (open/edit/print/etc.), not third-party junk
-            if (-not $targetPath -and -not (Test-Path $cmdKey)) {
-                continue
-            }
+            # Skip standard Windows shell verbs by name — these are always
+            # built-in (open, edit, print, etc.) and never third-party junk
+            $leafName = Split-Path $keyPath -Leaf
+            $standardVerbs = @(
+                'open', 'edit', 'print', 'printto', 'play', 'preview',
+                'runas', 'runasuser', 'find', 'explore', 'properties',
+                'install', 'uninstall', 'config', 'configure', 'sendto',
+                'new', 'rename', 'delete', 'copy', 'cut', 'paste',
+                'select', 'shell', 'Shell', 'None', 'SEP_', 'separator'
+            )
+            if ($leafName -in $standardVerbs) { continue }
 
             $publisher = Get-Publisher $keyPath
             $class = Classify-Entry $keyPath $targetPath $displayName $publisher
@@ -458,7 +464,7 @@ if ('scheduled_tasks' -in $allCategories) {
             }
         }
     } catch {
-        Write-Host "    [WARN] Cannot enumerate scheduled tasks (may need elevation): $_" -ForegroundColor Yellow
+        Write-Host "    [WARN] Cannot enumerate scheduled tasks — run as Administrator for this category" -ForegroundColor Yellow
     }
 
     $allResults += [PSCustomObject]@{
