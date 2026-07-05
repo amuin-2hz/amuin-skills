@@ -82,11 +82,11 @@ function Test-IsSigned($exePath) {
 
 function Match-Bloatware($text) {
     if (-not $text) { return @() }
-    $matches = @()
+    $bloatMatches = @()
     foreach ($p in $bloatwarePatterns) {
-        if ($text -match [regex]::Escape($p)) { $matches += $p }
+        if ($text -match [regex]::Escape($p)) { $bloatMatches += $p }
     }
-    return $matches
+    return $bloatMatches
 }
 
 function Classify-Entry($keyPath, $targetPath, $displayName, $publisher) {
