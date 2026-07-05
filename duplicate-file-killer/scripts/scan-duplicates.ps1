@@ -47,7 +47,7 @@ foreach ($root in $Paths) {
         }
     }
     if ($isSystemPath) {
-        Write-Host "  [SKIP] System directory (use -IncludeSystemPath to override): $root" -ForegroundColor DarkGray
+        Write-Host "  [SKIP] System directory (use -Paths to explicitly include if needed): $root" -ForegroundColor DarkGray
         $skippedSystem++
         continue
     }
@@ -127,10 +127,10 @@ foreach ($group in $candidateGroups) {
     # Group files in this size-bucket by hash
     $localHashes = @{}
     foreach ($f in $fileList) {
+        $stream = $null
         try {
             $stream = [System.IO.File]::OpenRead($f.FullName)
             $hashBytes = $sha.ComputeHash($stream)
-            $stream.Close()
             $hashStr = [BitConverter]::ToString($hashBytes).Replace('-', '').ToLower()
 
             if (-not $localHashes.ContainsKey($hashStr)) {
@@ -139,6 +139,8 @@ foreach ($group in $candidateGroups) {
             [void]$localHashes[$hashStr].Add($f)
         } catch {
             Write-Host "    [WARN] Cannot hash: $($f.FullName) — $_" -ForegroundColor Yellow
+        } finally {
+            if ($stream) { $stream.Close() }
         }
     }
 
@@ -162,9 +164,9 @@ function Get-Inode($path) {
         $ok = GetFileInformationByHandle($handle, $result)
         $handle.Close()
         if ($ok) {
-            $high = [BitConverter]::ToUInt64($result, 40)
-            $low  = [BitConverter]::ToUInt64($result, 48)
-            return "$high-$low-$($f.DirectoryName.ToLower())"  # inode + volume
+            $volumeSerial = [BitConverter]::ToUInt32($result, 28)
+            $fileIndex = [BitConverter]::ToUInt64($result, 44)
+            return "$volumeSerial-$fileIndex"
         }
     } catch {}
     return $null
