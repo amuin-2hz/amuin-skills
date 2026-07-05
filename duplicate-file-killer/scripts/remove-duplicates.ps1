@@ -29,6 +29,7 @@ function Move-ToRecycleBin($path) {
         if ($item) {
             $item.InvokeVerb('delete')
             Start-Sleep -Milliseconds 200
+            [System.Runtime.InteropServices.Marshal]::ReleaseComObject($shell) | Out-Null
             if (-not (Test-Path $path)) {
                 return @{ success = $true; method = 'recycle-bin' }
             }
@@ -89,6 +90,7 @@ if (-not $Permanent -and -not $WhatIf) {
     Write-Host "  ℹ Files are in Recycle Bin — empty it to permanently free space." -ForegroundColor Cyan
 }
 Write-Host ""
+if ($failed -gt 0) { exit 1 } else { exit 0 }
 
 # Output JSON for agent consumption
 $results | ConvertTo-Json -Depth 2 -Compress
