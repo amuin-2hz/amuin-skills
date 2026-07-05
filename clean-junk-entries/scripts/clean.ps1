@@ -13,9 +13,9 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
-# ── Admin check ──
+# ── Admin check (skip for dry-run) ──
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-if (-not $isAdmin) {
+if (-not $isAdmin -and -not $WhatIf) {
     Write-Host "  [ERROR] Admin rights required to modify registry. Run PowerShell as Administrator." -ForegroundColor Red
     exit 1
 }
