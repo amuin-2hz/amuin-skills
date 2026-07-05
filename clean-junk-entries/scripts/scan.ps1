@@ -176,6 +176,12 @@ if ('context_menu' -in $allCategories) {
                 } catch {}
             }
 
+            # Skip standard shell verbs — no command key AND no CLSID resolution means
+            # it's a ProgID-delegated verb (open/edit/print/etc.), not third-party junk
+            if (-not $targetPath -and -not (Test-Path $cmdKey)) {
+                continue
+            }
+
             $publisher = Get-Publisher $keyPath
             $class = Classify-Entry $keyPath $targetPath $displayName $publisher
             $summary[$class.tier]++
@@ -409,8 +415,11 @@ if ('scheduled_tasks' -in $allCategories) {
     $taskEntries = @()
 
     try {
-        $tasks = @(Get-ScheduledTask -ErrorAction SilentlyContinue) |
-            Where-Object { $_.TaskPath -notlike '\Microsoft\Windows\*' }
+        $allTasks = Get-ScheduledTask -ErrorAction SilentlyContinue
+        $tasks = @()
+        if ($allTasks) {
+            $tasks = @($allTasks | Where-Object { $_.TaskPath -notlike '\Microsoft\Windows\*' })
+        }
 
         foreach ($t in $tasks) {
             $taskInfo = Get-ScheduledTaskInfo $t.TaskName -TaskPath $t.TaskPath -ErrorAction SilentlyContinue
