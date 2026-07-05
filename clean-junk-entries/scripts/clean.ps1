@@ -69,7 +69,7 @@ $failed = 0
 $manifestEntries = @()
 
 foreach ($key in $Keys) {
-    $regKey = $key -replace '^Registry::', '' -replace '^(HKLM|HKCU|HKCR|HKU|HKCC):\\?', '$1\'
+    $regKey = $key -replace '^Registry::', ''
 
     # Also collect associated CLSID if applicable
     $clsidKeys = @()
