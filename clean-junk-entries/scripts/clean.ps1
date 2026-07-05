@@ -8,7 +8,6 @@ param(
     [string[]] $Keys,
 
     [switch] $WhatIf,
-    [switch] $Force,
     [switch] $AlsoDeleteCLSID   # If a key contains a CLSID in its path, also delete HKCR:\CLSID\{...}
 )
 
@@ -25,10 +24,13 @@ if (-not $isAdmin) {
 $timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'
 $backupRoot = "$env:USERPROFILE\Amuin\backups\clean-junk-entries"
 $backupDir = Join-Path $backupRoot $timestamp
-New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
 
 if ($WhatIf) {
     Write-Host "`n  DRY RUN — nothing will be deleted.`n" -ForegroundColor Cyan
+}
+
+if (-not $WhatIf) {
+    New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
 }
 
 Write-Host "`n  Cleaning $($Keys.Count) registry key(s)..." -ForegroundColor Cyan
@@ -131,8 +133,9 @@ if (-not $WhatIf) {
 }
 
 # ── Write restore helper ──
-$restoreScript = Join-Path $backupDir 'restore.cmd'
-@"
+if (-not $WhatIf) {
+    $restoreScript = Join-Path $backupDir 'restore.cmd'
+    @"
 @echo off
 echo Restoring registry keys from backup: $timestamp
 echo.
@@ -144,6 +147,7 @@ echo.
 echo Restore complete. Press any key to exit.
 pause >nul
 "@ | Out-File $restoreScript -Encoding ASCII
+}
 
 # ── Report ──
 Write-Host "`n  ───────────────────────────" -ForegroundColor DarkGray
