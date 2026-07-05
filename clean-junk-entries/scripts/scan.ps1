@@ -350,7 +350,7 @@ if ('explorer_bar' -in $allCategories) {
         'HKCR:\Drive\shellex\ContextMenuHandlers',
         'HKCR:\Drive\shellex\FolderExtensions',
         'HKCR:\Folder\shellex\ContextMenuHandlers',
-        'HKCR:\Folder\shellex\ColumnHandlers',
+        'HKCR:\Folder\shellex\ColumnHandlers'
         # 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell'  # Windows built-in commands (shell32.dll), never junk
     )
 
