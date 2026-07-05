@@ -154,7 +154,7 @@ if ('context_menu' -in $allCategories) {
         if (-not (Test-Path $ctxRoot)) { continue }
         $subkeys = Get-ChildItem $ctxRoot -ErrorAction SilentlyContinue
         foreach ($sk in $subkeys) {
-            $keyPath = $sk.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', ''
+            $keyPath = ($sk.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', '') -replace '^HKEY_CURRENT_USER\\?', 'HKCU:\' -replace '^HKEY_LOCAL_MACHINE\\?', 'HKLM:\' -replace '^HKEY_CLASSES_ROOT\\?', 'HKCR:\'
             $displayName = Get-DisplayName $keyPath (Split-Path $keyPath -Leaf)
             $targetPath = ''
 
@@ -229,7 +229,7 @@ if ('this_pc' -in $allCategories) {
             $clsid = Split-Path $ck.PSPath -Leaf
             if ($clsid -in $systemCLSID) { continue }  # Whitelist
 
-            $keyPath = $ck.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', ''
+            $keyPath = ($ck.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', '') -replace '^HKEY_CURRENT_USER\\?', 'HKCU:\' -replace '^HKEY_LOCAL_MACHINE\\?', 'HKLM:\' -replace '^HKEY_CLASSES_ROOT\\?', 'HKCR:\'
             $displayName = ''
             $targetPath = ''
 
@@ -296,7 +296,7 @@ if ('uninstall' -in $allCategories) {
         if (-not (Test-Path $uiRoot)) { continue }
         $subkeys = Get-ChildItem $uiRoot -ErrorAction SilentlyContinue
         foreach ($sk in $subkeys) {
-            $keyPath = $sk.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', ''
+            $keyPath = ($sk.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', '') -replace '^HKEY_CURRENT_USER\\?', 'HKCU:\' -replace '^HKEY_LOCAL_MACHINE\\?', 'HKLM:\' -replace '^HKEY_CLASSES_ROOT\\?', 'HKCR:\'
             $displayName = ''
             $targetPath = ''
             $publisher = ''
@@ -370,7 +370,7 @@ if ('explorer_bar' -in $allCategories) {
         if (-not (Test-Path $exRoot)) { continue }
         $subkeys = Get-ChildItem $exRoot -ErrorAction SilentlyContinue
         foreach ($sk in $subkeys) {
-            $keyPath = $sk.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', ''
+            $keyPath = ($sk.PSPath -replace '^Microsoft\.PowerShell\.Core\\Registry::', '') -replace '^HKEY_CURRENT_USER\\?', 'HKCU:\' -replace '^HKEY_LOCAL_MACHINE\\?', 'HKLM:\' -replace '^HKEY_CLASSES_ROOT\\?', 'HKCR:\'
             $displayName = Get-DisplayName $keyPath (Split-Path $keyPath -Leaf)
             $targetPath = ''
             $publisher = Get-Publisher $keyPath
