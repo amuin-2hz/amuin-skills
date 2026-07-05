@@ -187,9 +187,9 @@ if ('context_menu' -in $allCategories) {
     }
 
     $allResults += [PSCustomObject]@{
-        category = 'context_menu'
-        label    = 'Context Menu'
-        entries  = @($ctxEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
+        name    = 'context_menu'
+        label   = 'Context Menu'
+        entries = @($ctxEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
     }
 }
 
@@ -256,9 +256,9 @@ if ('this_pc' -in $allCategories) {
     }
 
     $allResults += [PSCustomObject]@{
-        category = 'this_pc'
-        label    = 'This PC Icons'
-        entries  = @($pcEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
+        name    = 'this_pc'
+        label   = 'This PC Icons'
+        entries = @($pcEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
     }
 }
 
@@ -328,9 +328,9 @@ if ('uninstall' -in $allCategories) {
     }
 
     $allResults += [PSCustomObject]@{
-        category = 'uninstall'
-        label    = 'Uninstall List'
-        entries  = @($uninstallEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
+        name    = 'uninstall'
+        label   = 'Uninstall List'
+        entries = @($uninstallEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
     }
 }
 
@@ -390,9 +390,9 @@ if ('explorer_bar' -in $allCategories) {
     }
 
     $allResults += [PSCustomObject]@{
-        category = 'explorer_bar'
-        label    = 'Explorer Extensions'
-        entries  = @($explorerEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
+        name    = 'explorer_bar'
+        label   = 'Explorer Extensions'
+        entries = @($explorerEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
     }
 }
 
@@ -426,12 +426,10 @@ if ('scheduled_tasks' -in $allCategories) {
             $class = Classify-Entry $t.TaskPath $targetPath $displayName ''
 
             # Scheduled task with failed last run + missing exe = confirmed junk
-            if ($class.tier -ne 'confirmed' -and $lastResult -ne 0) {
-                if (-not (Test-PathExists $targetPath)) {
-                    $class = @{ tier = 'confirmed'; evidence = "Last run failed (result=$lastResult) + target missing: $targetPath" }
-                } else {
-                    $class = @{ tier = 'suspicious'; evidence = "Last run failed (result=$lastResult)" }
-                }
+            if ($class.tier -ne 'confirmed' -and -not (Test-PathExists $targetPath)) {
+                $class = @{ tier = 'confirmed'; evidence = "Last run failed (result=$lastResult) + target missing: $targetPath" }
+            } elseif ($class.tier -eq 'clean') {
+                $class = @{ tier = 'suspicious'; evidence = "Last run failed (result=$lastResult)" }
             }
 
             $summary[$class.tier]++
@@ -450,9 +448,9 @@ if ('scheduled_tasks' -in $allCategories) {
     }
 
     $allResults += [PSCustomObject]@{
-        category = 'scheduled_tasks'
-        label    = 'Scheduled Tasks'
-        entries  = @($taskEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
+        name    = 'scheduled_tasks'
+        label   = 'Scheduled Tasks'
+        entries = @($taskEntries | Sort-Object { @{ confirmed=0; suspicious=1; clean=2 }[$_.tier] }, display_name)
     }
 }
 
@@ -463,6 +461,7 @@ if ($Json) {
         summary    = [PSCustomObject]$summary
     }
     Write-Output ($output | ConvertTo-Json -Depth 5 -Compress)
+    exit 0
 } else {
     # Color-coded table output
     foreach ($cat in $allResults) {
@@ -497,4 +496,6 @@ if ($Json) {
     Write-Host ""
     Write-Host "  Run with -Json for machine-readable output." -ForegroundColor Cyan
 }
+
+exit 0
 
