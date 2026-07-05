@@ -101,8 +101,7 @@ foreach ($key in $Keys) {
         if (-not $WhatIf) {
             try {
                 $targetRegPath = $target -replace '^(HKLM|HKCU|HKCR|HKU|HKCC):\\?', '$1\' -replace '/', '\'
-                $exportArgs = "export `"$targetRegPath`" `"$backupFile`" /y"
-                $result = reg $exportArgs 2>&1
+                $result = & reg export $targetRegPath $backupFile /y 2>&1
                 if ($LASTEXITCODE -ne 0) {
                     $results += [PSCustomObject]@{ key = $target; status = 'backup_failed'; backup_reg = ''; error = "reg export failed: $result" }
                     $failed++
