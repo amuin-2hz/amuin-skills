@@ -69,7 +69,7 @@ $failed = 0
 $manifestEntries = @()
 
 foreach ($key in $Keys) {
-    $regKey = $key -replace '^Registry::', ''
+    $regKey = $key -replace '^Registry::', '' -replace '^(HKLM|HKCU|HKCR|HKU|HKCC):\\?', '$1\'
 
     # Also collect associated CLSID if applicable
     $clsidKeys = @()
@@ -100,7 +100,8 @@ foreach ($key in $Keys) {
 
         if (-not $WhatIf) {
             try {
-                $exportArgs = "export `"$target`" `"$backupFile`" /y"
+                $targetRegPath = $target -replace '^(HKLM|HKCU|HKCR|HKU|HKCC):\\?', '$1\' -replace '/', '\'
+                $exportArgs = "export `"$targetRegPath`" `"$backupFile`" /y"
                 $result = reg $exportArgs 2>&1
                 if ($LASTEXITCODE -ne 0) {
                     $results += [PSCustomObject]@{ key = $target; status = 'backup_failed'; backup_reg = ''; error = "reg export failed: $result" }
