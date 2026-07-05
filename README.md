@@ -22,6 +22,7 @@ Saving you from a sluggish computer *is* saving you money.
 |------|-------------|
 | [free-drive-space](free-drive-space/) | Move bloated iPhone backups, browser profiles, WeChat files, and dev caches off your system drive — safely, with automatic verification. Frees tens to hundreds of GBs. |
 | [delete-stubborn-files](delete-stubborn-files/) | Windows refuses to delete a file? 7 causes, 5 weapons, 1 script. Diagnoses first, deletes with escalating force. |
+| [duplicate-file-killer](duplicate-file-killer/) | Find and safely delete exact duplicate files — photos, downloads, documents. Size + SHA256 hashing, Recycle Bin by default. |
 | More coming? | Always. The next one might be that thing you've been cursing at. Got an idea? [Open an issue](https://github.com/amuin-2hz/amuin-skills/issues) |
 
 ## How to Use
