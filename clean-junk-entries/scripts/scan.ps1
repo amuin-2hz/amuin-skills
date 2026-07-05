@@ -142,12 +142,7 @@ if ('context_menu' -in $allCategories) {
         'HKCR:\Drive\shell',
         'HKCR:\DesktopBackground\shell',
         'HKCR:\Folder\shell',
-        'HKCR:\Folder\shellex\ContextMenuHandlers',
-        # HKCU-scoped context menu paths (user-level installs like 抖音壁纸, 小智AI助手)
-        'HKCU:\Software\Classes\*\shell',
-        'HKCU:\Software\Classes\Directory\shell',
-        'HKCU:\Software\Classes\Directory\Background\shell',
-        'HKCU:\Software\Classes\DesktopBackground\shell'
+        'HKCR:\Folder\shellex\ContextMenuHandlers'
     )
 
     foreach ($ctxRoot in $ctxPaths) {
